@@ -21,4 +21,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="GameId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="f39b1f6f-d6c6-44d6-adc2-d8789013aa72" ChangeDateTime="02/01/2018 23:38:05" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+    <Property Name="ElementName" Value="[dbo].[GP_Rel].[IX_GP_Rel_Column]" />
+    <Property Name="ElementType" Value="SqlIndex" />
+    <Property Name="ParentElementName" Value="[dbo].[GP_Rel]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[IX_GP_Rel_GroupId]" />
+  </Operation>
 </Operations>

@@ -1,0 +1,23 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       None
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Create
+       [dbo].[GP_Rel] (Table)
+       [dbo].[GP_Rel].[IX_GP_Rel_GroupId] (Index)
+       [dbo].[GP_Rel].[IX_GP_Rel_PlayerId] (Index)
+       [dbo].[PG_Rel] (Table)
+       [dbo].[PG_Rel].[IX_PG_Rel_PlayerId] (Index)
+       [dbo].[PG_Rel].[IX_PG_Rel_GameId] (Index)
+       Default Constraint: unnamed constraint on [dbo].[GP_Rel] (Default Constraint)
+       Default Constraint: unnamed constraint on [dbo].[GP_Rel] (Default Constraint)
+       Default Constraint: unnamed constraint on [dbo].[PG_Rel] (Default Constraint)
+
+** Supporting actions

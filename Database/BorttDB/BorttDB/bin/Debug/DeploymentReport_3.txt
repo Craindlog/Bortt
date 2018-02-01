@@ -1,0 +1,24 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       [dbo].[Game]
+       [dbo].[Group]
+       [dbo].[Player]
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Drop
+       unnamed constraint on [dbo].[Game] (Default Constraint)
+       unnamed constraint on [dbo].[Game] (Default Constraint)
+       unnamed constraint on [dbo].[Group] (Default Constraint)
+       unnamed constraint on [dbo].[Player] (Default Constraint)
+     Table rebuild
+       [dbo].[Game] (Table)
+       [dbo].[Group] (Table)
+       [dbo].[Player] (Table)
+
+** Supporting actions

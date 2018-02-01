@@ -63,6 +63,8 @@
     <Build Include="TableDefinition\Group.sql" />
     <Build Include="TableDefinition\Player.sql" />
     <Build Include="TableDefinition\Game.sql" />
+    <Build Include="TableDefinition\GP_Rel.sql" />
+    <Build Include="TableDefinition\PG_Rel.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BorttDB.refactorlog" />
