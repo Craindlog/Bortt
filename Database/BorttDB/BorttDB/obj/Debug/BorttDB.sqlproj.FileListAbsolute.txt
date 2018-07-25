@@ -7,3 +7,4 @@ C:\Users\Adam\Documents\GitHub\Bortt\Database\BorttDB\BorttDB\obj\Debug\Model.xm
 C:\Users\Adam\Documents\GitHub\Bortt\Database\BorttDB\BorttDB\obj\Debug\refactor.xml
 C:\Users\Adam\Documents\GitHub\Bortt\Database\BorttDB\BorttDB\obj\Debug\postdeploy.sql
 C:\Users\Adam\Documents\GitHub\Bortt\Database\BorttDB\BorttDB\obj\Debug\predeploy.sql
+C:\Users\Adam\Documents\GitHub\Bortt\Database\BorttDB\BorttDB\obj\Debug\BorttDB.sqlprojAssemblyReference.cache

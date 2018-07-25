@@ -1,0 +1,11 @@
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\bin\Debug\netcoreapp2.0\Group.deps.json
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\bin\Debug\netcoreapp2.0\Group.runtimeconfig.json
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\bin\Debug\netcoreapp2.0\Group.runtimeconfig.dev.json
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\bin\Debug\netcoreapp2.0\Group.dll
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\obj\Debug\netcoreapp2.0\Group.csprojResolveAssemblyReference.cache
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\obj\Debug\netcoreapp2.0\Group.csproj.CoreCompileInputs.cache
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\obj\Debug\netcoreapp2.0\Group.AssemblyInfoInputs.cache
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\obj\Debug\netcoreapp2.0\Group.AssemblyInfo.cs
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\bin\Debug\netcoreapp2.0\Group.pdb
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\obj\Debug\netcoreapp2.0\Group.dll
+C:\Users\Adam\Documents\GitHub\Bortt\Services\Group\Group\obj\Debug\netcoreapp2.0\Group.pdb

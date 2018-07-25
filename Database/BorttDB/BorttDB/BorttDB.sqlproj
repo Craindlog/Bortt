@@ -58,6 +58,7 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="TableDefinition" />
+    <Folder Include="TestDataPopulation" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="TableDefinition\Group.sql" />
@@ -68,5 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BorttDB.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="TestDataPopulation\TestDataPopulation.PostDeployment1.sql" />
   </ItemGroup>
 </Project>

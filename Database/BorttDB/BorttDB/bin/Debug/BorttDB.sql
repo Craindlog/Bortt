@@ -45,81 +45,248 @@ IF EXISTS (SELECT 1
            WHERE  [name] = N'$(DatabaseName)')
     BEGIN
         ALTER DATABASE [$(DatabaseName)]
-            SET ARITHABORT ON,
-                CONCAT_NULL_YIELDS_NULL ON,
-                CURSOR_DEFAULT LOCAL 
+            SET QUERY_STORE (QUERY_CAPTURE_MODE = AUTO, OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30)) 
             WITH ROLLBACK IMMEDIATE;
     END
 
 
 GO
-IF EXISTS (SELECT 1
-           FROM   [master].[dbo].[sysdatabases]
-           WHERE  [name] = N'$(DatabaseName)')
-    BEGIN
-        ALTER DATABASE [$(DatabaseName)]
-            SET PAGE_VERIFY NONE,
-                DISABLE_BROKER 
-            WITH ROLLBACK IMMEDIATE;
-    END
+PRINT N'Rename refactoring operation with key 16c5ef7d-c32c-4e69-b589-a01b4f3c29b1 is skipped, element [dbo].[Player].[Id] (SqlSimpleColumn) will not be renamed to PlayerId';
 
 
 GO
-ALTER DATABASE [$(DatabaseName)]
-    SET TARGET_RECOVERY_TIME = 0 SECONDS 
-    WITH ROLLBACK IMMEDIATE;
+PRINT N'Rename refactoring operation with key 50fe2892-5c35-467e-8a74-a76b59d00b89 is skipped, element [dbo].[Game].[Id] (SqlSimpleColumn) will not be renamed to GameId';
 
 
 GO
-IF EXISTS (SELECT 1
-           FROM   [master].[dbo].[sysdatabases]
-           WHERE  [name] = N'$(DatabaseName)')
-    BEGIN
-        ALTER DATABASE [$(DatabaseName)]
-            SET QUERY_STORE (CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 367)) 
-            WITH ROLLBACK IMMEDIATE;
-    END
+PRINT N'Rename refactoring operation with key f39b1f6f-d6c6-44d6-adc2-d8789013aa72 is skipped, element [dbo].[GP_Rel].[IX_GP_Rel_Column] (SqlIndex) will not be renamed to [IX_GP_Rel_GroupId]';
 
 
 GO
-PRINT N'Rename refactoring operation with key 8523f71a-e612-4089-bfc1-7733d7496293 is skipped, element [dbo].[Group].[Id] (SqlSimpleColumn) will not be renamed to GroupID';
+PRINT N'Dropping unnamed constraint on [dbo].[Group]...';
 
 
 GO
-PRINT N'Creating [dbo].[Group]...';
+ALTER TABLE [dbo].[Group] DROP CONSTRAINT [DF__Group__CreateDat__239E4DCF];
 
 
 GO
-CREATE TABLE [dbo].[Group] (
-    [GroupID]       INT           NOT NULL,
+PRINT N'Starting rebuilding table [dbo].[Group]...';
+
+
+GO
+BEGIN TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+SET XACT_ABORT ON;
+
+CREATE TABLE [dbo].[tmp_ms_xx_Group] (
+    [GroupID]       INT           IDENTITY (1, 1) NOT NULL,
     [GroupName]     VARCHAR (255) NOT NULL,
     [GroupPassword] VARCHAR (255) NULL,
-    [CreateDate]    DATETIME      NOT NULL,
+    [CreateDate]    DATETIME      DEFAULT getdate() NOT NULL,
     PRIMARY KEY CLUSTERED ([GroupID] ASC)
+);
+
+IF EXISTS (SELECT TOP 1 1 
+           FROM   [dbo].[Group])
+    BEGIN
+        SET IDENTITY_INSERT [dbo].[tmp_ms_xx_Group] ON;
+        INSERT INTO [dbo].[tmp_ms_xx_Group] ([GroupID], [GroupName], [GroupPassword], [CreateDate])
+        SELECT   [GroupID],
+                 [GroupName],
+                 [GroupPassword],
+                 [CreateDate]
+        FROM     [dbo].[Group]
+        ORDER BY [GroupID] ASC;
+        SET IDENTITY_INSERT [dbo].[tmp_ms_xx_Group] OFF;
+    END
+
+DROP TABLE [dbo].[Group];
+
+EXECUTE sp_rename N'[dbo].[tmp_ms_xx_Group]', N'Group';
+
+COMMIT TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+
+GO
+PRINT N'Creating [dbo].[Game]...';
+
+
+GO
+CREATE TABLE [dbo].[Game] (
+    [GameId]     INT           IDENTITY (1, 1) NOT NULL,
+    [GameName]   VARCHAR (255) NOT NULL,
+    [BggLink]    NCHAR (10)    NULL,
+    [PlayersMin] INT           NOT NULL,
+    [PlayersMax] INT           NOT NULL,
+    PRIMARY KEY CLUSTERED ([GameId] ASC)
 );
 
 
 GO
-PRINT N'Creating unnamed constraint on [dbo].[Group]...';
+PRINT N'Creating [dbo].[GP_Rel]...';
 
 
 GO
-ALTER TABLE [dbo].[Group]
-    ADD DEFAULT getdate() FOR [CreateDate];
+CREATE TABLE [dbo].[GP_Rel] (
+    [GroupPlayerId] INT      IDENTITY (1, 1) NOT NULL,
+    [GroupId]       INT      NOT NULL,
+    [PlayerId]      INT      NOT NULL,
+    [JoinDate]      DATETIME NOT NULL,
+    [ActiveUntil]   DATETIME NOT NULL,
+    PRIMARY KEY CLUSTERED ([GroupPlayerId] ASC)
+);
+
+
+GO
+PRINT N'Creating [dbo].[GP_Rel].[IX_GP_Rel_GroupId]...';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_GP_Rel_GroupId]
+    ON [dbo].[GP_Rel]([GroupId] ASC);
+
+
+GO
+PRINT N'Creating [dbo].[GP_Rel].[IX_GP_Rel_PlayerId]...';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_GP_Rel_PlayerId]
+    ON [dbo].[GP_Rel]([PlayerId] ASC);
+
+
+GO
+PRINT N'Creating [dbo].[PG_Rel]...';
+
+
+GO
+CREATE TABLE [dbo].[PG_Rel] (
+    [PlayerGameId] INT      IDENTITY (1, 1) NOT NULL,
+    [PlayerId]     INT      NOT NULL,
+    [GameId]       INT      NOT NULL,
+    [DateOwned]    DATETIME NOT NULL,
+    PRIMARY KEY CLUSTERED ([PlayerGameId] ASC)
+);
+
+
+GO
+PRINT N'Creating [dbo].[PG_Rel].[IX_PG_Rel_PlayerId]...';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_PG_Rel_PlayerId]
+    ON [dbo].[PG_Rel]([PlayerId] ASC);
+
+
+GO
+PRINT N'Creating [dbo].[PG_Rel].[IX_PG_Rel_GameId]...';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_PG_Rel_GameId]
+    ON [dbo].[PG_Rel]([GameId] ASC);
+
+
+GO
+PRINT N'Creating [dbo].[Player]...';
+
+
+GO
+CREATE TABLE [dbo].[Player] (
+    [PlayerId]   INT           IDENTITY (1, 1) NOT NULL,
+    [PlayerName] VARCHAR (255) NOT NULL,
+    [CreatedOn]  DATETIME      NOT NULL,
+    PRIMARY KEY CLUSTERED ([PlayerId] ASC)
+);
+
+
+GO
+PRINT N'Creating unnamed constraint on [dbo].[Game]...';
+
+
+GO
+ALTER TABLE [dbo].[Game]
+    ADD DEFAULT 1 FOR [PlayersMin];
+
+
+GO
+PRINT N'Creating unnamed constraint on [dbo].[Game]...';
+
+
+GO
+ALTER TABLE [dbo].[Game]
+    ADD DEFAULT 999 FOR [PlayersMax];
+
+
+GO
+PRINT N'Creating unnamed constraint on [dbo].[GP_Rel]...';
+
+
+GO
+ALTER TABLE [dbo].[GP_Rel]
+    ADD DEFAULT GETDATE() FOR [JoinDate];
+
+
+GO
+PRINT N'Creating unnamed constraint on [dbo].[GP_Rel]...';
+
+
+GO
+ALTER TABLE [dbo].[GP_Rel]
+    ADD DEFAULT '12/31/9999' FOR [ActiveUntil];
+
+
+GO
+PRINT N'Creating unnamed constraint on [dbo].[PG_Rel]...';
+
+
+GO
+ALTER TABLE [dbo].[PG_Rel]
+    ADD DEFAULT GETDATE() FOR [DateOwned];
+
+
+GO
+PRINT N'Creating unnamed constraint on [dbo].[Player]...';
+
+
+GO
+ALTER TABLE [dbo].[Player]
+    ADD DEFAULT getdate() FOR [CreatedOn];
 
 
 GO
 -- Refactoring step to update target server with deployed transaction logs
+IF NOT EXISTS (SELECT OperationKey FROM [dbo].[__RefactorLog] WHERE OperationKey = '16c5ef7d-c32c-4e69-b589-a01b4f3c29b1')
+INSERT INTO [dbo].[__RefactorLog] (OperationKey) values ('16c5ef7d-c32c-4e69-b589-a01b4f3c29b1')
+IF NOT EXISTS (SELECT OperationKey FROM [dbo].[__RefactorLog] WHERE OperationKey = '50fe2892-5c35-467e-8a74-a76b59d00b89')
+INSERT INTO [dbo].[__RefactorLog] (OperationKey) values ('50fe2892-5c35-467e-8a74-a76b59d00b89')
+IF NOT EXISTS (SELECT OperationKey FROM [dbo].[__RefactorLog] WHERE OperationKey = 'f39b1f6f-d6c6-44d6-adc2-d8789013aa72')
+INSERT INTO [dbo].[__RefactorLog] (OperationKey) values ('f39b1f6f-d6c6-44d6-adc2-d8789013aa72')
 
-IF OBJECT_ID(N'dbo.__RefactorLog') IS NULL
-BEGIN
-    CREATE TABLE [dbo].[__RefactorLog] (OperationKey UNIQUEIDENTIFIER NOT NULL PRIMARY KEY)
-    EXEC sp_addextendedproperty N'microsoft_database_tools_support', N'refactoring log', N'schema', N'dbo', N'table', N'__RefactorLog'
-END
 GO
-IF NOT EXISTS (SELECT OperationKey FROM [dbo].[__RefactorLog] WHERE OperationKey = '8523f71a-e612-4089-bfc1-7733d7496293')
-INSERT INTO [dbo].[__RefactorLog] (OperationKey) values ('8523f71a-e612-4089-bfc1-7733d7496293')
 
+GO
+/*
+Post-Deployment Script Template							
+--------------------------------------------------------------------------------------
+ This file contains SQL statements that will be appended to the build script.		
+ Use SQLCMD syntax to include a file in the post-deployment script.			
+ Example:      :r .\myfile.sql								
+ Use SQLCMD syntax to reference a variable in the post-deployment script.		
+ Example:      :setvar TableName MyTable							
+               SELECT * FROM [$(TableName)]					
+--------------------------------------------------------------------------------------
+*/
+
+--INSERT INTO BorttDB.dbo.[Group] (GroupID, GroupName, GroupPassword) VALUES (1, 'TestGroup' , 'password')
+
+DECLARE @GRP_ID INT = (SELECT GroupID FROM BorttDB.dbo.[Group] WHERE GroupName = 'TestGroup')
+SELECT * FROM BorttDB.dbo.[Group] WHERE GroupID = @GRP_ID
 GO
 
 GO
